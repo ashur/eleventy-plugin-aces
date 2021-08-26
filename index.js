@@ -15,8 +15,12 @@ module.exports.pluginCssData = (dotEleventy) =>
 	let cssDir = `${includesDir}/${projectConfig.plugins.css.input || 'css'}`;
 
 	let data = {
-		output: projectConfig.plugins.css.output,
+		config: projectConfig.plugins.css || {},
 		stylesheets: listFiles( cssDir, includesDir ),
+		styles: {
+			async: {},
+			critical: {},
+		}
 	};
 
 	data.categories = Object.keys( data.stylesheets );
