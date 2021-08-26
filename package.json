@@ -2,7 +2,7 @@
   "name": "eleventy-plugin-css",
   "version": "1.0.0",
   "description": "An Eleventy utility plugin for building critical and asynchronous CSS stylesheets",
-  "main": "index.js",
+  "main": ".eleventy.js",
   "scripts": {
     "dev": "onchange -i './index.js' 'test/**' -- npm run test",
     "lint": "eslint ./*.js test/*.js",
