@@ -6,7 +6,7 @@ const UserConfig = require( "@11ty/eleventy/src/UserConfig" );
  * @param {Function} dotEleventy
  * @returns {Object}
  */
-module.exports.data = (dotEleventy) =>
+module.exports.pluginCssData = (dotEleventy) =>
 {
 	let projectConfig = dotEleventy( new UserConfig() );
 
