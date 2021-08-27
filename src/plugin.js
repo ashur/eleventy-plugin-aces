@@ -6,10 +6,18 @@ class Plugin
 {
 	/**
 	 * @param {Object} options
+	 * @param {Object} [options.dir]
 	 * @param {Array} [options.fileExtensions]
 	 */
-	constructor( { fileExtensions=[] } = {} )
+	constructor( { dir={}, fileExtensions=[] } = {} )
 	{
+		this.dir = {
+			components: "components",
+			output: "/css",
+
+			...dir
+		};
+
 		this.fileExtensions = [".css", ...fileExtensions];
 
 		this.styles = {
@@ -152,6 +160,54 @@ class Plugin
 		}
 
 		return allStyles.join( "\n" );
+	}
+
+	/**
+	 * @param {string} identifier
+	 * @returns {boolean}
+	 */
+	hasAsync( identifier )
+	{
+		return this.hasScope({
+			identifier: identifier,
+			scope: "async",
+		});
+	}
+
+	/**
+	 * @param {string} identifier
+	 * @returns {boolean}
+	 */
+	hasCritical( identifier )
+	{
+		return this.hasScope({
+			identifier: identifier,
+			scope: "critical",
+		});
+	}
+
+	/**
+	 * @param {Object} options
+	 * @param {string} options.scope
+	 * @param {string} options.identifier
+	 * @returns {boolean}
+	 */
+	hasScope( { scope, identifier } = {} )
+	{
+		let hasScope = false;
+
+		Object.keys( this.stylesheets[scope] ).forEach( category =>
+		{
+			hasScope = hasScope || this.stylesheets[scope][category].length > 0;
+		});
+
+		if( identifier )
+		{
+			hasScope = hasScope ||
+				(this.styles[scope][identifier] && this.styles[scope][identifier].length > 0)
+		}
+
+		return hasScope;
 	}
 }
 

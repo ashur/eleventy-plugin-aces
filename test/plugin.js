@@ -237,4 +237,78 @@ describe( "Plugin", () =>
 			});
 		});
 	});
+
+	describe( ".hasAsync()", () =>
+	{
+		it( "should return false by default", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.isFalse( plugin.hasAsync() );
+		});
+
+		it( "should return true if any async stylesheets are defined", () =>
+		{
+			let plugin = new Plugin();
+
+			plugin.addStylesheet({
+				category: "blocks",
+				scope: "async",
+				stylesheet: "./test/fixtures/blocks/card.css",
+			});
+
+			assert.isTrue( plugin.hasAsync() );
+		});
+
+		it( "should return true if any async styles are defined", () =>
+		{
+			let plugin = new Plugin();
+			let identifier = "/content/index";
+
+			plugin.addStyle({
+				identifier: identifier,
+				scope: "async",
+				style: "body {}",
+			});
+
+			assert.isTrue( plugin.hasAsync( identifier ) );
+		});
+	});
+
+	describe( ".hasCritical()", () =>
+	{
+		it( "should return false by default", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.isFalse( plugin.hasCritical() );
+		});
+
+		it( "should return true if any critical stylesheets are defined", () =>
+		{
+			let plugin = new Plugin();
+
+			plugin.addStylesheet({
+				category: "blocks",
+				scope: "critical",
+				stylesheet: "./test/fixtures/blocks/card.css",
+			});
+
+			assert.isTrue( plugin.hasCritical() );
+		});
+
+		it( "should return true if any critical styles are defined", () =>
+		{
+			let plugin = new Plugin();
+			let identifier = "/content/index";
+
+			plugin.addStyle({
+				identifier: identifier,
+				scope: "critical",
+				style: "body {}",
+			});
+
+			assert.isTrue( plugin.hasCritical( identifier ) );
+		});
+	});
 });
