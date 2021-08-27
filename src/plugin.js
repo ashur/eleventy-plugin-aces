@@ -1,3 +1,4 @@
+const CleanCSS = require( "clean-css" );
 const deepmerge = require( "deepmerge" );
 const fs = require( "fs" );
 const path = require( "path" );
@@ -161,7 +162,9 @@ class Plugin
 			allStyles = allStyles.concat( styles );
 		}
 
-		return allStyles.join( "\n" );
+		return this.postProcessor(
+			allStyles.join( "\n" )
+		);
 	}
 
 	/**
@@ -210,6 +213,25 @@ class Plugin
 		}
 
 		return hasScope;
+	}
+
+	/**
+	 * @param {string} style
+	 * @returns {string}
+	 */
+	postProcessor( style )
+	{
+		let options = {};
+		if( process.env.NODE_ENV !== "production" )
+		{
+			options = {
+				format: "beautify",
+			};
+		}
+
+		return new CleanCSS( options )
+			.minify( style )
+			.styles;
 	}
 }
 

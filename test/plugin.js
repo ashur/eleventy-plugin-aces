@@ -1,6 +1,7 @@
 /* global describe, it */
 
 const {assert} = require( "chai" );
+const CleanCSS = require( "clean-css" );
 const Plugin = require( "../" );
 
 describe( "Plugin", () =>
@@ -114,6 +115,8 @@ describe( "Plugin", () =>
 			it( "should return styles added with addStyle concatenated as a single string", () =>
 			{
 				let plugin = new Plugin();
+				plugin.postProcessor = style => style;
+
 				let identifier = "/contents/index";
 				let styles = [
 					`body {\n\tcolor: #333;\n}`,
@@ -140,6 +143,7 @@ describe( "Plugin", () =>
 			it( "should return styles defined in stylesheets added with addStylesheet", () =>
 			{
 				let plugin = new Plugin();
+				plugin.postProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -158,6 +162,7 @@ describe( "Plugin", () =>
 			it( "should return styles defined in stylesheets of different categories if no category is specified", () =>
 			{
 				let plugin = new Plugin();
+				plugin.postProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -199,6 +204,7 @@ describe( "Plugin", () =>
 			it( "should return all stylesheets, only styles associated with identifier when identifier is specified", () =>
 			{
 				let plugin = new Plugin();
+				plugin.postProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -309,6 +315,83 @@ describe( "Plugin", () =>
 			});
 
 			assert.isTrue( plugin.hasCritical( identifier ) );
+		});
+	});
+
+	describe( ".postProcessor()", () =>
+	{
+		it( "should return beautified styles by default", () =>
+		{
+			let plugin = new Plugin();
+			let originalStyle = "   body{\n\n\n color:red     }\n";
+
+			plugin.addStyle({
+				identifier: "/content/index",
+				scope: "critical",
+				style: originalStyle,
+			});
+
+			let expected = new CleanCSS(
+					{
+						format: "beautify",
+					}
+				)
+				.minify( originalStyle )
+				.styles;
+
+			assert.equal( plugin.critical({
+				identifier: "/content/index",
+			}), expected );
+		});
+
+		it( "should return compressed styles if NODE_ENV === 'production'", () =>
+		{
+			let originalNodeEnv = process.env.NODE_ENV;
+
+			process.env.NODE_ENV = "production";
+
+			let plugin = new Plugin();
+			let originalStyle = "   body{\n\n\n color:red     }\n";
+
+			plugin.addStyle({
+				identifier: "/content/index",
+				scope: "critical",
+				style: originalStyle,
+			});
+
+			let expected = new CleanCSS()
+				.minify( originalStyle )
+				.styles;
+
+			assert.equal( plugin.critical({
+				identifier: "/content/index",
+			}), expected );
+
+			process.env.NODE_ENV = originalNodeEnv;
+		});
+
+		it( "should apply user-defined rules if overridden", () =>
+		{
+			let plugin = new Plugin();
+			let originalStyle = "   body{\n\n\n color:red     }\n";
+
+			plugin.addStyle({
+				identifier: "/content/index",
+				scope: "critical",
+				style: originalStyle,
+			});
+
+			let postProcessor = (style) => style.toUpperCase();
+			plugin.postProcessor = postProcessor;
+
+			assert.equal(
+				plugin.critical(
+					{
+						identifier: "/content/index",
+					}
+				),
+				postProcessor( originalStyle )
+			);
 		});
 	});
 });
