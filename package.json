@@ -4,7 +4,7 @@
   "description": "An Eleventy utility plugin for building critical and asynchronous CSS stylesheets",
   "main": ".eleventy.js",
   "scripts": {
-    "dev": "onchange -i './index.js' 'test/**' -- npm run test",
+    "dev": "onchange -i './index.js' 'src/**' 'test/**' -- npm run test",
     "lint": "eslint ./*.js test/*.js",
     "test": "mocha test/"
   },
