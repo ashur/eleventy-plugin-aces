@@ -7,6 +7,8 @@ class Plugin
 	/**
 	 * @param {Object} options
 	 * @param {Object} [options.dir]
+	 * @param {string} [options.dir.components] - Path to components directory, relative to Eleventy includes directory
+	 * @param {string} [options.dir.output] - Path CSS output folder, relative to Eleventy output directory
 	 * @param {Array} [options.fileExtensions]
 	 */
 	constructor( { dir={}, fileExtensions=[] } = {} )
