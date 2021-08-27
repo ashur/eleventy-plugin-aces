@@ -7,12 +7,12 @@ class Plugin
 	 */
 	constructor( options )
 	{
-		this.stylesheets = {
+		this.styles = {
 			async: {},
-			critical: {}
+			critical: {},
 		};
 
-		this.styles = {
+		this.stylesheets = {
 			async: {},
 			critical: {},
 		};
