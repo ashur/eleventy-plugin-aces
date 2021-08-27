@@ -20,39 +20,32 @@ class Plugin
 
 	/**
 	 * @param {Object} options
-	 * @param {string} [options.category]
 	 * @param {string} options.identifier
 	 * @param {string} options.style
 	 * @param {string} options.scope
 	 */
-	addStyle( {category="uncategorized", identifier, scope, style} )
+	addStyle( {identifier, scope, style} = {} )
 	{
 		if( !this.styles[scope] )
 		{
 			throw new Error( `Unsupported scope: '${scope}'` );
 		}
 
-		if( !this.styles[scope][category] )
+		if( !this.styles[scope][identifier] )
 		{
-			this.styles[scope][category] = {};
+			this.styles[scope][identifier] = [];
 		}
 
-		if( !this.styles[scope][category][identifier] )
-		{
-			this.styles[scope][category][identifier] = [];
-		}
-
-		this.styles[scope][category][identifier].push( style );
+		this.styles[scope][identifier].push( style );
 	}
 
 	/**
 	 * @param {Object} options
 	 * @param {string} [options.category]
-	 * @param {string} options.identifier
 	 * @param {string} options.scope
 	 * @param {string} options.stylesheet
 	 */
-	addStylesheet( {category="uncategorized", identifier, scope, stylesheet} )
+	addStylesheet( {category="uncategorized", scope, stylesheet} = {} )
 	{
 		if( !this.styles[scope] )
 		{
@@ -61,25 +54,29 @@ class Plugin
 
 		if( !this.stylesheets[scope][category] )
 		{
-			this.stylesheets[scope][category] = {};
+			this.stylesheets[scope][category] = [];
 		}
 
-		if( !this.stylesheets[scope][category][identifier] )
-		{
-			this.stylesheets[scope][category][identifier] = [];
-		}
+		this.stylesheets[scope][category].push( stylesheet );
+	}
 
-		this.stylesheets[scope][category][identifier].push( stylesheet );
+	/**
+	 * @param {string} directoryPath
+	 */
+	addStylesheetsDirectory( directoryPath )
+	{
+
 	}
 
 	/**
 	 * Return all async styles associated with the requested identifier
 	 *
-	 * @param {string} identifier
-	 * @param {string} category
+	 * @param {Object} options
+	 * @param {string} [options.identifier]
+	 * @param {string} [options.category]
 	 * @returns {string}
 	 */
-	async( identifier, category="uncategorized" )
+	async( {identifier, category} = {} )
 	{
 		return this.getStyles({
 			category: category,
@@ -91,11 +88,12 @@ class Plugin
 	/**
 	 * Return all critical styles associated with the requested identifier
 	 *
-	 * @param {string} identifier
-	 * @param {string} category
+	 * @param {Object} options
+	 * @param {string} [options.identifier]
+	 * @param {string} [options.category]
 	 * @returns {string}
 	 */
-	critical( identifier, category="uncategorized" )
+	critical( {identifier, category} = {} )
 	{
 		return this.getStyles({
 			category: category,
@@ -115,18 +113,29 @@ class Plugin
 		let allStyles = [];
 
 		/* Stylesheets */
-		let stylesheets = this.stylesheets?.[scope]?.[category]?.[identifier];
-		if( stylesheets )
+		let stylesheets = [];
+		if( category )
 		{
-			stylesheets.forEach( stylesheet =>
+			stylesheets = this.stylesheets[scope][category];
+		}
+		else
+		{
+			Object.keys( this.stylesheets[scope] ).forEach( category =>
 			{
-				let style = fs.readFileSync( stylesheet );
-				allStyles.push( style.toString() );
+				stylesheets = stylesheets.concat(
+					this.stylesheets[scope][category]
+				);
 			});
 		}
 
+		stylesheets.forEach( stylesheet =>
+		{
+			let style = fs.readFileSync( stylesheet );
+			allStyles.push( style.toString() );
+		});
+
 		/* Styles */
-		let styles = this.styles?.[scope]?.[category]?.[identifier];
+		let styles = this.styles[scope][identifier];
 		if( styles )
 		{
 			allStyles = allStyles.concat( styles );

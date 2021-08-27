@@ -33,7 +33,9 @@ describe( "Plugin", () =>
 		{
 			let plugin = new Plugin();
 
-			assert.equal( plugin.async( "/contents/index" ), "" );
+			assert.equal( plugin.async({
+				identifier: "/contents/index"
+			}), "" );
 		});
 
 		it( "should return styles added with addStyle concatenated as a single string", () =>
@@ -55,7 +57,9 @@ describe( "Plugin", () =>
 			});
 
 			assert.equal(
-				plugin.async( identifier ),
+				plugin.async({
+					identifier: identifier
+				}),
 				styles.join( "\n" ),
 			);
 		});
@@ -89,7 +93,9 @@ describe( "Plugin", () =>
 			});
 
 			assert.equal(
-				plugin.critical( identifier ),
+				plugin.critical({
+					identifier: identifier
+				}),
 				styles.join( "\n" ),
 			);
 		});
@@ -97,28 +103,54 @@ describe( "Plugin", () =>
 		it( "should return styles defined in stylesheets added with addStylesheet", () =>
 		{
 			let plugin = new Plugin();
-			let identifier = "/contents/about";	
 
 			plugin.addStylesheet({
 				scope: "critical",
-				identifier: identifier,
-				stylesheet: "./test/fixtures/composition.css"
+				stylesheet: "./test/fixtures/composition.css",
+				category: "composition",
 			});
 
 			assert.equal(
-				plugin.critical( identifier ),
+				plugin.critical({
+					category: "composition"
+				}),
 				`.stack > * + * {\n	margin-top: var( --stack-size );\n}\n`
+			);
+		});
+
+		it( "should return styles defined in stylesheets of different categories if no category is specified", () =>
+		{
+			let plugin = new Plugin();
+
+			plugin.addStylesheet({
+				scope: "critical",
+				stylesheet: "./test/fixtures/composition.css",
+				category: "composition",
+			});
+
+			plugin.addStylesheet({
+				scope: "critical",
+				stylesheet: "./test/fixtures/blocks/card.css",
+				category: "blocks",
+			});
+
+			assert.equal(
+				plugin.critical(),
+				[
+					".stack > * + * {\n\tmargin-top: var( --stack-size );\n}\n",
+					".card {\n\tborder-radius: 0.5em;\n}\n",
+
+				].join( "\n" )
 			);
 		});
 
 		it( "should throw if stylesheet does not exist", () =>
 		{
 			let plugin = new Plugin();
-			let identifier = "/contents/about";	
+			let identifier = "/contents/about";
 
 			plugin.addStylesheet({
 				scope: "critical",
-				identifier: identifier,
 				stylesheet: "./test/fixtures/non-existent.css"
 			});
 
@@ -127,31 +159,43 @@ describe( "Plugin", () =>
 			assert.throws( fn );
 		});
 
-		it( "should return only appropriate styles when is category specified", () =>
+		it( "should return all stylesheets, only styles associated with identifier when identifier is specified", () =>
 		{
 			let plugin = new Plugin();
-			let identifier = "/contents/about";	
 
-			let globalStyle = ":root {\n\t--color-black: #333;\n}";
-			let compositionStyle = ".stack > * + * {\n	margin-top: var( --stack-size );\n}";
-
-			plugin.addStyle({
+			plugin.addStylesheet({
 				scope: "critical",
-				identifier: identifier,
-				style: globalStyle,
-				category: "global",
+				stylesheet: "./test/fixtures/blocks/card.css",
+				category: "blocks",
 			});
 
+			let indexIdentifier = "/contents/index";
+			let indexStyle = ":root {\n\t--color-black: #333;\n}";
+
 			plugin.addStyle({
 				scope: "critical",
-				identifier: identifier,
-				style: compositionStyle,
-				category: "composition",
+				identifier: indexIdentifier,
+				style: indexStyle
+			});
+
+			let aboutIdentifier = "/contents/about";
+			let aboutStyle = ".stack > * + * {\n	margin-top: var( --stack-size );\n}";
+
+			plugin.addStyle({
+				scope: "critical",
+				identifier: aboutIdentifier,
+				style: aboutStyle
 			});
 
 			assert.equal(
-				plugin.critical( identifier, "global" ),
-				globalStyle,
+				plugin.critical({
+					identifier: indexIdentifier
+				}),
+				[
+					`.card {\n\tborder-radius: 0.5em;\n}\n`,
+					indexStyle,
+
+				].join( "\n" ),
 			);
 		});
 	});
