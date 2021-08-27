@@ -27,6 +27,79 @@ describe( "Plugin", () =>
 		});
 	});
 
+	describe( ".addStylesheetsDirectory", () =>
+	{
+		it( "should throw if directory does not exist", () =>
+		{
+			let plugin = new Plugin();
+			let fn = () => plugin.addStylesheetsDirectory( "./test/fixtures/non-existent" );
+
+			assert.throws( fn );
+		});
+
+		it( "should add top-level directories and files as categories", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.isUndefined( plugin.stylesheets.async.blocks );
+			assert.isUndefined( plugin.stylesheets.async.composition );
+			assert.isUndefined( plugin.stylesheets.async.global );
+
+			assert.isUndefined( plugin.stylesheets.critical.blocks );
+			assert.isUndefined( plugin.stylesheets.critical.composition );
+			assert.isUndefined( plugin.stylesheets.critical.global );
+
+			plugin.addStylesheetsDirectory( "./test/fixtures/" );
+
+			assert.isArray( plugin.stylesheets.async.blocks );
+			assert.isArray( plugin.stylesheets.async.composition );
+			assert.isArray( plugin.stylesheets.async.global );
+
+			assert.isArray( plugin.stylesheets.critical.blocks );
+			assert.isArray( plugin.stylesheets.critical.composition );
+			assert.isArray( plugin.stylesheets.critical.global );
+		});
+
+		it( "should add stylesheets alongside existing stylesheets", () =>
+		{
+			let plugin = new Plugin();
+
+			plugin.addStylesheet({
+				category: "global",
+				scope: "async",
+				stylesheet: "./test/fixtures/global/non-existent.css",
+			});
+
+			assert.equal( plugin.stylesheets.async.global.length, 1, "Number of items in stylesheets.async.global" );
+
+			plugin.addStylesheetsDirectory( "./test/fixtures/" );
+
+			assert.equal( plugin.stylesheets.async.global.length, 2, "Number of items in stylesheets.async.global" );
+		});
+
+		it( "should only add stylesheets with a .css extension by default", () =>
+		{
+			let plugin = new Plugin();
+
+			plugin.addStylesheetsDirectory( "./test/fixtures/" );
+
+			assert.equal( plugin.stylesheets.async.blocks.length, 1, "Number of items in stylesheets.async.blocks" );
+			assert.equal( plugin.stylesheets.critical.blocks.length, 2, "Number of items in stylesheets.critical.blocks" );
+		});
+
+		it( "should support additional file extensions via .fileExtensions options constructor argument", () =>
+		{
+			let plugin = new Plugin({
+				fileExtensions: [".txt"]
+			});
+
+			plugin.addStylesheetsDirectory( "./test/fixtures/" );
+
+			assert.equal( plugin.stylesheets.async.blocks.length, 1, "Number of items in stylesheets.async.blocks" );
+			assert.equal( plugin.stylesheets.critical.blocks.length, 3, "Number of items in stylesheets.critical.blocks" );
+		});
+	});
+
 	["async", "critical"].forEach( scope =>
 	{
 		describe( `.${scope}`, () =>

@@ -27,7 +27,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@11ty/eleventy": "^0.12.1"
+    "@11ty/eleventy": "^0.12.1",
+    "deepmerge": "^4.2.2"
   },
   "devDependencies": {
     "chai": "^4.3.4",

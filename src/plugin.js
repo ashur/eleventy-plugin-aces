@@ -1,12 +1,17 @@
+const deepmerge = require( "deepmerge" );
 const fs = require( "fs" );
+const path = require( "path" );
 
 class Plugin
 {
 	/**
 	 * @param {Object} options
+	 * @param {Array} [options.fileExtensions]
 	 */
-	constructor( options )
+	constructor( { fileExtensions=[] } = {} )
 	{
+		this.fileExtensions = [".css", ...fileExtensions];
+
 		this.styles = {
 			async: {},
 			critical: {},
@@ -65,7 +70,12 @@ class Plugin
 	 */
 	addStylesheetsDirectory( directoryPath )
 	{
+		let directoryStylesheets = getStylesheetsFromDirectory({
+			directoryPath: directoryPath,
+			fileExtensions: this.fileExtensions,
 
+		});
+		this.stylesheets = deepmerge( this.stylesheets, directoryStylesheets );
 	}
 
 	/**
@@ -146,3 +156,88 @@ class Plugin
 }
 
 module.exports = Plugin;
+
+/**
+ * @param {Object} options
+ * @param {string} options.directoryPath
+ * @param {string[]} options.fileExtensions
+ * @param {string} [options.category]
+ * @returns {Object}
+ */
+function getStylesheetsFromDirectory( { directoryPath, fileExtensions, category } )
+{
+	let stylesheets = {
+		async: {},
+		critical: {},
+	};
+
+	let directoryContents = fs.readdirSync
+	(
+		directoryPath,
+		{ withFileTypes: true }
+	);
+
+	directoryContents.forEach( child =>
+	{
+		let childPath = path.normalize( `${directoryPath}/${child.name}` );
+		let childCategory = category;
+
+		if( child.isFile() && !fileExtensions.includes( path.extname( child.name ) ) )
+		{
+			return;
+		}
+
+		if( childCategory === undefined )
+		{
+			if( child.isDirectory() )
+			{
+				childCategory = child.name.toLowerCase()
+			}
+			else
+			{
+				childCategory = path.basename(
+					child.name,
+					path.extname( child.name )
+				);
+			}
+		}
+
+		if( !stylesheets.async[childCategory] )
+		{
+			stylesheets.async[childCategory] = []
+		}
+		if( !stylesheets.critical[childCategory] )
+		{
+			stylesheets.critical[childCategory] = []
+		}
+
+		if( child.isDirectory() )
+		{
+			let categoryStylesheets = getStylesheetsFromDirectory({
+				directoryPath: childPath,
+				fileExtensions: fileExtensions,
+				category: childCategory,
+			});
+
+			stylesheets.async[childCategory] = stylesheets.async[childCategory].concat(
+				categoryStylesheets.async[childCategory]
+			);
+
+			stylesheets.critical[childCategory] = stylesheets.critical[childCategory].concat(
+				categoryStylesheets.critical[childCategory]
+			);
+		}
+		else
+		{
+			let scope = path
+				.basename( child.name )
+				.includes( "-async" )
+				? "async"
+				: "critical";
+
+			stylesheets[scope][childCategory].push( childPath );
+		}
+	});
+
+	return stylesheets;
+}
