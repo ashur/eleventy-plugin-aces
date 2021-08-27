@@ -1,7 +1,7 @@
 /* global describe, it */
 
 const {assert} = require( "chai" );
-const Plugin = require( "../src/plugin" );
+const Plugin = require( "../" );
 
 describe( "Plugin", () =>
 {

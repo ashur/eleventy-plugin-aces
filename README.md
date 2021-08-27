@@ -7,7 +7,7 @@ An Eleventy utility plugin for building critical and asynchronous CSS stylesheet
 To install this plugin, run the following command at the root of your Eleventy project:
 
 ```
-npm install --save ashur/eleventy-plugin-find
+npm install --save ashur/eleventy-plugin-css
 ```
 
 Next, create a file `css.js` somewhere in your [global data folder](https://www.11ty.dev/docs/data-global/) — ex., `src/_data/plugins/css.js`:
@@ -26,11 +26,15 @@ Finally, paste the following into the new data file:
 
 ```javascript
 // css.js
-const dotEleventy = require( "../../../.eleventy.js" );
-module.exports = require( "eleventy-plugin-css" ).data( dotEleventy );
+const Plugin = require( "eleventy-plugin-css/src/plugin" );
+
+let cssPlugin = new Plugin();
+cssPlugin.addStylesheetsDirectory( "./src/_includes/css" );
+
+module.exports = cssPlugin;
 ```
 
-> 🎈 Be sure to check that the `dotEleventy` path is correct for your project structure.
+> 🎈 Be sure to set the .
 
 
 ## Usage
