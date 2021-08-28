@@ -5,6 +5,15 @@ const path = require( "path" );
 
 class Plugin
 {
+	static defaults = {
+		dir: {
+			components: "components",
+			output: "/css",
+		},
+
+		fileExtensions: [".css"],
+	};
+
 	/**
 	 * @param {Object} options
 	 * @param {Object} [options.dir]
@@ -14,14 +23,15 @@ class Plugin
 	 */
 	constructor( { dir={}, fileExtensions=[] } = {} )
 	{
-		this.dir = {
-			components: "components",
-			output: "/css",
+		this.dir = deepmerge(
+			Plugin.defaults.dir,
+			dir
+		);
 
-			...dir
-		};
-
-		this.fileExtensions = [".css", ...fileExtensions];
+		this.fileExtensions = deepmerge(
+			Plugin.defaults.fileExtensions,
+			fileExtensions
+		);
 
 		this.styles = {
 			async: {},
