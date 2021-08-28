@@ -28,12 +28,18 @@ and paste the following into the new data file:
 const {Plugin} = require( "eleventy-plugin-aces" );
 
 let acesOptions = {
-	// See Options below
+    // See Options below
 };
 
 let acesPlugin = new Plugin( acesOptions );
 
 module.exports = acesPlugin;
+```
+
+To specify a stylesheets directory:
+
+```javascript
+acesPlugin.addStylesheetsDirectory( "./src/_includes/css" );
 ```
 
 ### Options
@@ -42,14 +48,14 @@ The `Plugin` constructor accepts an options parameter with the following structu
 
 ```javascript
 let acesOptions = {
-	dir: {
-		components: "components"
-		output: "/css",
-	},
+    dir: {
+        components: "components"
+        output: "/css",
+    },
 
-	fileExtensions: [".css"],
+    fileExtensions: [".css"],
 
-	pluginKey: "aces"
+    pluginKey: "aces"
 };
 ```
 
@@ -65,11 +71,11 @@ const {eleventyPlugin: eleventyPluginAces} = require( "eleventy-plugin-aces" );
 
 module.exports = eleventyConfig =>
 {
-	let acesOptions = {
-		// See Options above
-	};
+    let acesOptions = {
+        // See Options above
+    };
 
-	eleventyConfig.addPlugin( eleventyPluginDataCss, acesOptions);
+    eleventyConfig.addPlugin( eleventyPluginDataCss, acesOptions);
 }
 ```
 
