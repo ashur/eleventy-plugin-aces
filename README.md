@@ -75,7 +75,7 @@ module.exports = eleventyConfig =>
         // See Options above
     };
 
-    eleventyConfig.addPlugin( eleventyPluginDataCss, acesOptions);
+    eleventyConfig.addPlugin( eleventyPluginDataCss, acesOptions );
 }
 ```
 
