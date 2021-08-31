@@ -6,6 +6,8 @@ const path = require( "path" );
 class Plugin
 {
 	static defaults = {
+		categorySortOrder: [],
+
 		dir: {
 			components: "components",
 			output: "/css",
@@ -16,21 +18,27 @@ class Plugin
 
 	/**
 	 * @param {Object} options
+	 * @param {string[]} [options.categorySortOrder]
 	 * @param {Object} [options.dir]
 	 * @param {string} [options.dir.components] - Path to components directory, relative to Eleventy includes directory
 	 * @param {string} [options.dir.output] - Path CSS output folder, relative to Eleventy output directory
 	 * @param {Array} [options.fileExtensions]
 	 */
-	constructor( { dir={}, fileExtensions=[] } = {} )
+	constructor( { categorySortOrder=[], dir={}, fileExtensions=[] } = {} )
 	{
+		this.categorySortOrder = deepmerge(
+			Plugin.defaults.categorySortOrder,
+			categorySortOrder,
+		);
+
 		this.dir = deepmerge(
 			Plugin.defaults.dir,
-			dir
+			dir,
 		);
 
 		this.fileExtensions = deepmerge(
 			Plugin.defaults.fileExtensions,
-			fileExtensions
+			fileExtensions,
 		);
 
 		this.styles = {
@@ -151,12 +159,25 @@ class Plugin
 		}
 		else
 		{
-			Object.keys( this.stylesheets[scope] ).forEach( category =>
-			{
-				stylesheets = stylesheets.concat(
-					this.stylesheets[scope][category]
-				);
-			});
+			Object.keys( this.stylesheets[scope] )
+				.sort( (a,b) =>
+				{
+					let sortIndexA = this.categorySortOrder.indexOf(a) > -1
+						? this.categorySortOrder.indexOf(a) - this.categorySortOrder.length
+						: 0
+
+					let sortIndexB = this.categorySortOrder.indexOf(b) > -1
+						? this.categorySortOrder.indexOf(b) - this.categorySortOrder.length
+						: 0
+
+					return sortIndexA - sortIndexB;
+				})
+				.forEach( category =>
+				{
+					stylesheets = stylesheets.concat(
+						this.stylesheets[scope][category]
+					);
+				});
 		}
 
 		stylesheets.forEach( stylesheet =>

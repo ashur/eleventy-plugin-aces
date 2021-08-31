@@ -2,7 +2,7 @@
 
 const {assert} = require( "chai" );
 const CleanCSS = require( "clean-css" );
-const Plugin = require( "../" );
+const {Plugin} = require( "../" );
 
 describe( "Plugin", () =>
 {
@@ -156,6 +156,46 @@ describe( "Plugin", () =>
 						category: "composition"
 					}),
 					`.stack > * + * {\n	margin-top: var( --stack-size );\n}\n`
+				);
+			});
+
+			it( "should return styles defined in stylesheets in the order defined by .categorySortOrder", () =>
+			{
+				let plugin = new Plugin({
+					categorySortOrder: [
+						"global",
+						"composition",
+						"utilities",	// not defined
+						"blocks",
+					],
+				});
+				plugin.postProcessor = style => style;
+
+				plugin.addStylesheet({
+					scope: scope,
+					stylesheet: "./test/fixtures/blocks/button.css",
+					category: "blocks",
+				});
+
+				plugin.addStylesheet({
+					scope: scope,
+					stylesheet: "./test/fixtures/composition.css",
+					category: "composition",
+				});
+
+				plugin.addStylesheet({
+					scope: scope,
+					stylesheet: "./test/fixtures/global/index.css",
+					category: "global",
+				});
+
+				assert.equal(
+					plugin[scope](),
+					[
+						`:root {\n\t--color-black: #333;\n}\n`, // global/index.css
+						`.stack > * + * {\n\tmargin-top: var( --stack-size );\n}\n`, // composition.css
+						`.button {\n\tborder-radius: 0.5em;\n}\n`, // blocks/button.css
+					].join( "\n" )
 				);
 			});
 

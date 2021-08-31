@@ -4,6 +4,7 @@ const Plugin = require( "./src/plugin" );
 /**
  * @param {UserConfig} eleventyConfig
  * @param {Object} options
+ * @param {string[]} [options.categorySortOrder]
  * @param {Object} [options.dir]
  * @param {string} [options.dir.components] - Path to components directory, relative to Eleventy includes directory
  * @param {string} [options.dir.output] - Path to CSS output folder, relative to Eleventy output directory

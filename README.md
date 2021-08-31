@@ -48,6 +48,8 @@ The `Plugin` constructor accepts an options parameter with the following structu
 
 ```javascript
 let acesOptions = {
+	categorySortOrder: [],
+
     dir: {
         components: "components"
         output: "/css",
