@@ -50,6 +50,35 @@ class Plugin
 			async: {},
 			critical: {},
 		};
+
+		this.scripts = {
+			async: {},
+			critical: {},
+		};
+	}
+
+	/**
+	 * @param {Object} options
+	 * @param {string} options.identifier
+	 * @param {string} options.scope
+	 * @param {string} options.script
+	 */
+	addScript( {identifier, scope, script} = {} )
+	{
+		if( !this.scripts[scope] )
+		{
+			throw new Error( `Unsupported scope: '${scope}'` );
+		}
+
+		if( !this.scripts[scope][identifier] )
+		{
+			this.scripts[scope][identifier] = [];
+		}
+
+		if( this.scripts[scope][identifier].indexOf( script ) === -1 )
+		{
+			this.scripts[scope][identifier].push( script );
+		}
 	}
 
 	/**
@@ -142,6 +171,70 @@ class Plugin
 	}
 
 	/**
+	 * Return all async scripts associated with the requested identifier
+	 *
+	 * @param {Object} options
+	 * @param {string} [options.identifier]
+	 * @returns {string}
+	 */
+	asyncScripts( {identifier} = {} )
+	{
+		let scripts = this.scripts["async"][identifier];
+		if( !scripts )
+		{
+			return "";
+		}
+
+		let scriptTags = scripts
+			.map( script =>
+			{
+				if( script.src )
+				{
+					let attributes = Object.keys( script )
+						.map( key =>
+						{
+							if( script[key] === true )
+							{
+								return key;
+							}
+							else
+							{
+								return `${key}="${script[key]}"`;
+							}
+						});
+
+					return `<script ${attributes.join( " " )}></script>`;
+				}
+				else
+				{
+					return `<script src="${script}"></script>`;
+				}
+			});
+
+	return scriptTags
+		.filter( (value, index) => scriptTags.indexOf( value ) === index )
+		.join( "\n" );
+	}
+
+	/**
+	 * Return all critical scripts associated with the requested identifier
+	 *
+	 * @param {Object} options
+	 * @param {string} [options.identifier]
+	 * @returns {string}
+	 */
+	criticalScripts( {identifier} = {} )
+	{
+		let scripts = this.scripts["critical"][identifier];
+		if( !scripts )
+		{
+			return "";
+		}
+
+		return scripts.join( "\n" );
+	}
+
+	/**
 	 * @param {Object} options
 	 * @param {string} options.category
 	 * @param {string} options.identifier
@@ -220,6 +313,38 @@ class Plugin
 			identifier: identifier,
 			scope: "critical",
 		});
+	}
+
+	/**
+	 * @param {string} identifier
+	 * @returns {boolean}
+	 */
+	hasAsyncScripts( identifier )
+	{
+		if( !this.scripts["async"][identifier] )
+		{
+			return false;
+		}
+
+		return this.scripts["async"] &&
+			this.scripts["async"][identifier] &&
+			this.scripts["async"][identifier].length > 0;
+	}
+
+	/**
+	 * @param {string} identifier
+	 * @returns {boolean}
+	 */
+	hasCriticalScripts( identifier )
+	{
+		if( !this.scripts["critical"][identifier] )
+		{
+			return false;
+		}
+
+		return this.scripts["critical"] &&
+			this.scripts["critical"][identifier] &&
+			this.scripts["critical"][identifier].length > 0;
 	}
 
 	/**

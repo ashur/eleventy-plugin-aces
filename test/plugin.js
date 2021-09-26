@@ -6,6 +6,17 @@ const {Plugin} = require( "../" );
 
 describe( "Plugin", () =>
 {
+	describe( ".addScript", () =>
+	{
+		it( "should throw if scope is unsupported", () =>
+		{
+			let plugin = new Plugin();
+			let fn = () => plugin.addScript( { scope: "myCustomScope" } );
+
+			assert.throws( fn, "Unsupported scope: 'myCustomScope'" );
+		});
+	});
+
 	describe( ".addStyle", () =>
 	{
 		it( "should throw if scope is unsupported", () =>
@@ -284,6 +295,119 @@ describe( "Plugin", () =>
 		});
 	});
 
+	describe( ".asyncScripts()", () =>
+	{
+		it( "should return empty string for undefined identifiers", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.equal( plugin.asyncScripts( "/contents/index" ), "" );
+		});
+
+		it( "should return script tag with ", () =>
+		{
+			let plugin = new Plugin();
+
+			let identifier = "/contents/index";
+			let scripts = [
+				{
+					src: "/local/script.js",
+					defer: true,
+					"x-custom-attr": "foo",
+				},
+				{
+					src: "https://example.com/remote/script.js",
+					init: true,
+					"x-custom-attr": "bar",
+				},
+			];
+
+			scripts.forEach( script =>
+			{
+				plugin.addScript({
+					scope: "async",
+					identifier: identifier,
+					script: script
+				});
+			});
+
+			assert.equal(
+				plugin.asyncScripts({
+					identifier: identifier,
+				}),
+
+				[
+					`<script src="/local/script.js" defer x-custom-attr="foo"></script>`,
+					`<script src="https://example.com/remote/script.js" init x-custom-attr="bar"></script>`,
+				].join( "\n" )
+			);
+		});
+
+		it( "should return scripts added with addScript concatenated as a single string", () =>
+		{
+			let plugin = new Plugin();
+
+			let identifier = "/contents/index";
+			let scripts = [
+				`console.log('hello')`,
+				`console.log('world')`,
+			];
+
+			scripts.forEach( script =>
+			{
+				plugin.addScript({
+					scope: "critical",
+					identifier: identifier,
+					script: script
+				});
+			});
+
+			assert.equal(
+				plugin.criticalScripts({
+					identifier: identifier
+				}),
+				scripts.join( "\n" ),
+			);
+		});
+	});
+
+	describe( ".criticalScripts()", () =>
+	{
+		it( "should return empty string for undefined identifiers", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.equal( plugin.criticalScripts( "/contents/index" ), "" );
+		});
+
+		it( "should return scripts added with addScript concatenated as a single string", () =>
+		{
+			let plugin = new Plugin();
+
+			let identifier = "/contents/index";
+			let scripts = [
+				`console.log('hello')`,
+				`console.log('world')`,
+			];
+
+			scripts.forEach( script =>
+			{
+				plugin.addScript({
+					scope: "critical",
+					identifier: identifier,
+					script: script
+				});
+			});
+
+			assert.equal(
+				plugin.criticalScripts({
+					identifier: identifier
+				}),
+				scripts.join( "\n" ),
+			);
+		});
+	});
+
 	describe( ".hasAsync()", () =>
 	{
 		it( "should return false by default", () =>
@@ -355,6 +479,56 @@ describe( "Plugin", () =>
 			});
 
 			assert.isTrue( plugin.hasCritical( identifier ) );
+		});
+	});
+
+	describe( ".hasAsyncScripts()", () =>
+	{
+		it( "should return false by default", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.isFalse( plugin.hasAsyncScripts() );
+		});
+
+		it( "should return true if any async scripts are defined", () =>
+		{
+			let plugin = new Plugin();
+			let identifier = "/content/index";
+
+			plugin.addScript({
+				identifier: identifier,
+				scope: "async",
+				script: {
+					src: "https://example.com/remote/script.js"
+				},
+			});
+
+			assert.isTrue( plugin.hasAsyncScripts( identifier ), "plugin.hasAsyncScripts()" );
+		});
+	});
+
+	describe( ".hasCriticalScripts()", () =>
+	{
+		it( "should return false by default", () =>
+		{
+			let plugin = new Plugin();
+
+			assert.isFalse( plugin.hasCriticalScripts() );
+		});
+
+		it( "should return true if any critical scripts are defined", () =>
+		{
+			let plugin = new Plugin();
+			let identifier = "/content/index";
+
+			plugin.addScript({
+				identifier: identifier,
+				scope: "critical",
+				script: "console.log('hello')",
+			});
+
+			assert.isTrue( plugin.hasCriticalScripts( identifier ), "plugin.hasCriticalScripts()" );
 		});
 	});
 
