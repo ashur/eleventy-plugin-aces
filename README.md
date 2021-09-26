@@ -10,13 +10,13 @@ To install this plugin, run the following command at the root of your Eleventy p
 npm install --save ashur/eleventy-plugin-esc
 ```
 
-Next, create a file `esc.js` somewhere in your [global data folder](https://www.11ty.dev/docs/data-global/) — ex., `src/_data/plugins/css.js`:
+Next, create a file `esc.js` somewhere in your [global data folder](https://www.11ty.dev/docs/data-global/) — ex., `src/_data/plugins/esc.js`:
 
 ```
 +-- src/
   +-- _data/
 	+-- plugins/
-	  +-- css.js
+	  +-- esc.js
   +-- _includes/
   +-- content/
 +-- .eleventy.js
