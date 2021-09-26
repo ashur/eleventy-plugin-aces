@@ -1,7 +1,7 @@
 {
   "name": "eleventy-plugin-esc",
   "version": "1.0.0",
-  "description": "An Eleventy data plugin for building single-file components",
+  "description": "An Eleventy data plugin for building single-file components with Nunjucks, HTML, CSS, and JavaScript",
   "main": "index.js",
   "scripts": {
     "dev": "onchange -i './index.js' 'src/**' 'test/**' -- npm run test",

@@ -1,6 +1,6 @@
 # eleventy-plugin-esc
 
-An Eleventy utility plugin for building critical and asynchronous CSS stylesheets.
+An Eleventy data plugin for building single-file components with Nunjucks, HTML, CSS, and JavaScript.
 
 ## Setup
 
