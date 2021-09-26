@@ -14,7 +14,7 @@ const Plugin = require( "./src/plugin" );
  */
 module.exports.eleventyPlugin = (eleventyConfig, options={}) =>
 {
-	let pluginKey = options.pluginKey || "aces";
+	let pluginKey = options.pluginKey || "esc";
 
 	// Support scheduled for Eleventy v1.0.0
 	// https://www.11ty.dev/docs/data-global-custom/

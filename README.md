@@ -1,4 +1,4 @@
-# eleventy-plugin-aces
+# eleventy-plugin-esc
 
 An Eleventy utility plugin for building critical and asynchronous CSS stylesheets.
 
@@ -7,10 +7,10 @@ An Eleventy utility plugin for building critical and asynchronous CSS stylesheet
 To install this plugin, run the following command at the root of your Eleventy project:
 
 ```
-npm install --save ashur/eleventy-plugin-aces
+npm install --save ashur/eleventy-plugin-esc
 ```
 
-Next, create a file `aces.js` somewhere in your [global data folder](https://www.11ty.dev/docs/data-global/) — ex., `src/_data/plugins/css.js`:
+Next, create a file `esc.js` somewhere in your [global data folder](https://www.11ty.dev/docs/data-global/) — ex., `src/_data/plugins/css.js`:
 
 ```
 +-- src/
@@ -25,21 +25,21 @@ Next, create a file `aces.js` somewhere in your [global data folder](https://www
 and paste the following into the new data file:
 
 ```javascript
-const {Plugin} = require( "eleventy-plugin-aces" );
+const {Plugin} = require( "eleventy-plugin-esc" );
 
-let acesOptions = {
+let escOptions = {
     // See Options below
 };
 
-let acesPlugin = new Plugin( acesOptions );
+let escPlugin = new Plugin( escOptions );
 
-module.exports = acesPlugin;
+module.exports = escPlugin;
 ```
 
 To specify a stylesheets directory:
 
 ```javascript
-acesPlugin.addStylesheetsDirectory( "./src/_includes/css" );
+escPlugin.addStylesheetsDirectory( "./src/_includes/css" );
 ```
 
 ### Options
@@ -47,7 +47,7 @@ acesPlugin.addStylesheetsDirectory( "./src/_includes/css" );
 The `Plugin` constructor accepts an options parameter with the following structure (shown with default values):
 
 ```javascript
-let acesOptions = {
+let escOptions = {
 	categorySortOrder: [],
 
     dir: {
@@ -57,7 +57,7 @@ let acesOptions = {
 
     fileExtensions: [".css"],
 
-    pluginKey: "aces"
+    pluginKey: "esc"
 };
 ```
 
@@ -65,19 +65,19 @@ let acesOptions = {
 
 ### Eleventy 1.0.0
 
-It hasn't shipped yet, but Eleventy 1.0.0 will add support for plugins to define global data. When that lands, you can add `eleventy-plugin-aces` in your `.eleventy.js` file instead:
+It hasn't shipped yet, but Eleventy 1.0.0 will add support for plugins to define global data. When that lands, you can add `eleventy-plugin-esc` in your `.eleventy.js` file instead:
 
 ```javascript
 // .eleventy.js
-const {eleventyPlugin: eleventyPluginAces} = require( "eleventy-plugin-aces" );
+const {eleventyPlugin: eleventyPluginEsc} = require( "eleventy-plugin-esc" );
 
 module.exports = eleventyConfig =>
 {
-    let acesOptions = {
+    let escOptions = {
         // See Options above
     };
 
-    eleventyConfig.addPlugin( eleventyPluginDataCss, acesOptions );
+    eleventyConfig.addPlugin( eleventyPluginDataCss, escOptions );
 }
 ```
 
