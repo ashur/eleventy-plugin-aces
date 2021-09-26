@@ -6,7 +6,7 @@ const {Plugin} = require( "../" );
 
 describe( "Plugin", () =>
 {
-	describe( ".addScript", () =>
+	describe( ".addScript()", () =>
 	{
 		it( "should throw if scope is unsupported", () =>
 		{
@@ -17,7 +17,7 @@ describe( "Plugin", () =>
 		});
 	});
 
-	describe( ".addStyle", () =>
+	describe( ".addStyle()", () =>
 	{
 		it( "should throw if scope is unsupported", () =>
 		{
@@ -28,7 +28,7 @@ describe( "Plugin", () =>
 		});
 	});
 
-	describe( ".addStylesheet", () =>
+	describe( ".addStylesheet()", () =>
 	{
 		it( "should throw if scope is unsupported", () =>
 		{
@@ -39,7 +39,7 @@ describe( "Plugin", () =>
 		});
 	});
 
-	describe( ".addStylesheetsDirectory", () =>
+	describe( ".addStylesheetsDirectory()", () =>
 	{
 		it( "should throw if directory does not exist", () =>
 		{
@@ -114,13 +114,15 @@ describe( "Plugin", () =>
 
 	["async", "critical"].forEach( scope =>
 	{
-		describe( `.${scope}`, () =>
+		let method = `${scope}Styles`;
+
+		describe( `.${method}()`, () =>
 		{
 			it( "should return empty string for undefined identifiers", () =>
 			{
 				let plugin = new Plugin();
 
-				assert.equal( plugin[scope]( "/contents/index" ), "" );
+				assert.equal( plugin[method]( "/contents/index" ), "" );
 			});
 
 			it( "should return styles added with addStyle concatenated as a single string", () =>
@@ -144,7 +146,7 @@ describe( "Plugin", () =>
 				});
 
 				assert.equal(
-					plugin[scope]({
+					plugin[method]({
 						identifier: identifier
 					}),
 					styles.join( "\n" ),
@@ -163,7 +165,7 @@ describe( "Plugin", () =>
 				});
 
 				assert.equal(
-					plugin[scope]({
+					plugin[method]({
 						category: "composition"
 					}),
 					`.stack > * + * {\n	margin-top: var( --stack-size );\n}\n`
@@ -201,7 +203,7 @@ describe( "Plugin", () =>
 				});
 
 				assert.equal(
-					plugin[scope](),
+					plugin[method](),
 					[
 						`:root {\n\t--color-black: #333;\n}\n`, // global/index.css
 						`.stack > * + * {\n\tmargin-top: var( --stack-size );\n}\n`, // composition.css
@@ -228,7 +230,7 @@ describe( "Plugin", () =>
 				});
 
 				assert.equal(
-					plugin[scope](),
+					plugin[method](),
 					[
 						".stack > * + * {\n\tmargin-top: var( --stack-size );\n}\n",
 						".card {\n\tborder-radius: 0.5em;\n}\n",
@@ -247,7 +249,7 @@ describe( "Plugin", () =>
 					stylesheet: "./test/fixtures/non-existent.css"
 				});
 
-				let fn = () => plugin[scope]( identifier );
+				let fn = () => plugin[method]( identifier );
 
 				assert.throws( fn );
 			});
@@ -282,7 +284,7 @@ describe( "Plugin", () =>
 				});
 
 				assert.equal(
-					plugin[scope]({
+					plugin[method]({
 						identifier: indexIdentifier
 					}),
 					[
@@ -553,7 +555,7 @@ describe( "Plugin", () =>
 				.minify( originalStyle )
 				.styles;
 
-			assert.equal( plugin.critical({
+			assert.equal( plugin.criticalStyles({
 				identifier: "/content/index",
 			}), expected );
 		});
@@ -577,7 +579,7 @@ describe( "Plugin", () =>
 				.minify( originalStyle )
 				.styles;
 
-			assert.equal( plugin.critical({
+			assert.equal( plugin.criticalStyles({
 				identifier: "/content/index",
 			}), expected );
 
@@ -599,7 +601,7 @@ describe( "Plugin", () =>
 			plugin.postProcessor = postProcessor;
 
 			assert.equal(
-				plugin.critical(
+				plugin.criticalStyles(
 					{
 						identifier: "/content/index",
 					}

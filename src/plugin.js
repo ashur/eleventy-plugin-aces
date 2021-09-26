@@ -144,7 +144,7 @@ class Plugin
 	 * @param {string} [options.category]
 	 * @returns {string}
 	 */
-	async( {identifier, category} = {} )
+	asyncStyles( {identifier, category} = {} )
 	{
 		return this.getStyles({
 			category: category,
@@ -161,7 +161,7 @@ class Plugin
 	 * @param {string} [options.category]
 	 * @returns {string}
 	 */
-	critical( {identifier, category} = {} )
+	criticalStyles( {identifier, category} = {} )
 	{
 		return this.getStyles({
 			category: category,
