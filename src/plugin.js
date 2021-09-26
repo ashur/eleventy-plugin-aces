@@ -286,7 +286,7 @@ class Plugin
 			allStyles = allStyles.concat( styles );
 		}
 
-		return this.postProcessor(
+		return this.stylePostProcessor(
 			allStyles.join( "\n" )
 		);
 	}
@@ -295,9 +295,9 @@ class Plugin
 	 * @param {string} identifier
 	 * @returns {boolean}
 	 */
-	hasAsync( identifier )
+	hasAsyncStyles( identifier )
 	{
-		return this.hasScope({
+		return this.hasStyleScope({
 			identifier: identifier,
 			scope: "async",
 		});
@@ -307,9 +307,9 @@ class Plugin
 	 * @param {string} identifier
 	 * @returns {boolean}
 	 */
-	hasCritical( identifier )
+	hasCriticalStyles( identifier )
 	{
-		return this.hasScope({
+		return this.hasStyleScope({
 			identifier: identifier,
 			scope: "critical",
 		});
@@ -353,7 +353,7 @@ class Plugin
 	 * @param {string} options.identifier
 	 * @returns {boolean}
 	 */
-	hasScope( { scope, identifier } = {} )
+	hasStyleScope( { scope, identifier } = {} )
 	{
 		let hasScope = false;
 
@@ -375,7 +375,7 @@ class Plugin
 	 * @param {string} style
 	 * @returns {string}
 	 */
-	postProcessor( style )
+	stylePostProcessor( style )
 	{
 		let options = {};
 		if( process.env.NODE_ENV !== "production" )

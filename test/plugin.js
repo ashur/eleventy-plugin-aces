@@ -128,7 +128,7 @@ describe( "Plugin", () =>
 			it( "should return styles added with addStyle concatenated as a single string", () =>
 			{
 				let plugin = new Plugin();
-				plugin.postProcessor = style => style;
+				plugin.stylePostProcessor = style => style;
 
 				let identifier = "/contents/index";
 				let styles = [
@@ -156,7 +156,7 @@ describe( "Plugin", () =>
 			it( "should return styles defined in stylesheets added with addStylesheet", () =>
 			{
 				let plugin = new Plugin();
-				plugin.postProcessor = style => style;
+				plugin.stylePostProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -182,7 +182,7 @@ describe( "Plugin", () =>
 						"blocks",
 					],
 				});
-				plugin.postProcessor = style => style;
+				plugin.stylePostProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -215,7 +215,7 @@ describe( "Plugin", () =>
 			it( "should return styles defined in stylesheets of different categories if no category is specified", () =>
 			{
 				let plugin = new Plugin();
-				plugin.postProcessor = style => style;
+				plugin.stylePostProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -257,7 +257,7 @@ describe( "Plugin", () =>
 			it( "should return all stylesheets, only styles associated with identifier when identifier is specified", () =>
 			{
 				let plugin = new Plugin();
-				plugin.postProcessor = style => style;
+				plugin.stylePostProcessor = style => style;
 
 				plugin.addStylesheet({
 					scope: scope,
@@ -410,13 +410,13 @@ describe( "Plugin", () =>
 		});
 	});
 
-	describe( ".hasAsync()", () =>
+	describe( ".hasAsyncStyles()", () =>
 	{
 		it( "should return false by default", () =>
 		{
 			let plugin = new Plugin();
 
-			assert.isFalse( plugin.hasAsync() );
+			assert.isFalse( plugin.hasAsyncStyles() );
 		});
 
 		it( "should return true if any async stylesheets are defined", () =>
@@ -429,7 +429,7 @@ describe( "Plugin", () =>
 				stylesheet: "./test/fixtures/blocks/card.css",
 			});
 
-			assert.isTrue( plugin.hasAsync() );
+			assert.isTrue( plugin.hasAsyncStyles() );
 		});
 
 		it( "should return true if any async styles are defined", () =>
@@ -443,17 +443,17 @@ describe( "Plugin", () =>
 				style: "body {}",
 			});
 
-			assert.isTrue( plugin.hasAsync( identifier ) );
+			assert.isTrue( plugin.hasAsyncStyles( identifier ) );
 		});
 	});
 
-	describe( ".hasCritical()", () =>
+	describe( ".hasCriticalStyles()", () =>
 	{
 		it( "should return false by default", () =>
 		{
 			let plugin = new Plugin();
 
-			assert.isFalse( plugin.hasCritical() );
+			assert.isFalse( plugin.hasCriticalStyles() );
 		});
 
 		it( "should return true if any critical stylesheets are defined", () =>
@@ -466,7 +466,7 @@ describe( "Plugin", () =>
 				stylesheet: "./test/fixtures/blocks/card.css",
 			});
 
-			assert.isTrue( plugin.hasCritical() );
+			assert.isTrue( plugin.hasCriticalStyles() );
 		});
 
 		it( "should return true if any critical styles are defined", () =>
@@ -480,7 +480,7 @@ describe( "Plugin", () =>
 				style: "body {}",
 			});
 
-			assert.isTrue( plugin.hasCritical( identifier ) );
+			assert.isTrue( plugin.hasCriticalStyles( identifier ) );
 		});
 	});
 
@@ -534,7 +534,7 @@ describe( "Plugin", () =>
 		});
 	});
 
-	describe( ".postProcessor()", () =>
+	describe( ".stylePostProcessor()", () =>
 	{
 		it( "should return beautified styles by default", () =>
 		{
@@ -597,8 +597,8 @@ describe( "Plugin", () =>
 				style: originalStyle,
 			});
 
-			let postProcessor = (style) => style.toUpperCase();
-			plugin.postProcessor = postProcessor;
+			let stylePostProcessor = (style) => style.toUpperCase();
+			plugin.stylePostProcessor = stylePostProcessor;
 
 			assert.equal(
 				plugin.criticalStyles(
@@ -606,7 +606,7 @@ describe( "Plugin", () =>
 						identifier: "/content/index",
 					}
 				),
-				postProcessor( originalStyle )
+				stylePostProcessor( originalStyle )
 			);
 		});
 	});
