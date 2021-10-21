@@ -231,7 +231,9 @@ class Plugin
 			return "";
 		}
 
-		return scripts.join( "\n" );
+		return scripts
+			.filter( (value, index) => scripts.indexOf( value ) === index )
+			.join( "\n" );
 	}
 
 	/**
@@ -280,10 +282,14 @@ class Plugin
 		});
 
 		/* Styles */
-		let styles = this.styles[scope][identifier];
-		if( styles )
+		if( this.styles[scope][identifier] )
 		{
-			allStyles = allStyles.concat( styles );
+			let styles = this.styles[scope][identifier];
+
+			let uniqueStyles = styles
+				.filter( (value, index) => styles.indexOf( value ) === index );
+
+			allStyles = allStyles.concat( uniqueStyles );
 		}
 
 		return this.stylePostProcessor(

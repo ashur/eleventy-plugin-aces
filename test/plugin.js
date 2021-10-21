@@ -408,6 +408,37 @@ describe( "Plugin", () =>
 				scripts.join( "\n" ),
 			);
 		});
+
+		it( "should return unique scripts only", () =>
+		{
+			let plugin = new Plugin();
+
+			let identifier = "/contents/index";
+			let scripts = [
+				`console.log('hello')`,
+				`console.log('hello')`,
+			];
+
+			scripts.forEach( script =>
+			{
+				plugin.addScript({
+					scope: "critical",
+					identifier: identifier,
+					script: script
+				});
+			});
+
+			console.log( plugin.criticalScripts({
+				identifier: identifier
+			}) );
+
+			assert.equal(
+				plugin.criticalScripts({
+					identifier: identifier
+				}),
+				scripts[0],
+			);
+		});
 	});
 
 	describe( ".hasAsyncStyles()", () =>
