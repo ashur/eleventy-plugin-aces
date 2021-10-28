@@ -99,7 +99,11 @@ class Plugin
 			this.styles[scope][identifier] = [];
 		}
 
-		this.styles[scope][identifier].push( style );
+		// Don't add duplicate styles
+		if( this.styles[scope][identifier].indexOf( style ) === -1 )
+		{
+			this.styles[scope][identifier].push( style );
+		}
 	}
 
 	/**
