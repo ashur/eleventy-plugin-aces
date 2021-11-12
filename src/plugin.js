@@ -387,7 +387,14 @@ class Plugin
 	 */
 	stylePostProcessor( style )
 	{
-		let options = {};
+		let options = {
+			level: {
+				2: {
+					all: true,
+				},
+			},
+		};
+
 		if( process.env.NODE_ENV !== "production" )
 		{
 			options = {
