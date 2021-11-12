@@ -477,9 +477,9 @@ function getStylesheetsFromDirectory( { directoryPath, fileExtensions, category 
 		{
 			let scope = path
 				.basename( child.name )
-				.includes( "-async" )
-				? "async"
-				: "critical";
+				.includes( "-critical" )
+				? "critical"
+				: "async";
 
 			stylesheets[scope][childCategory].push( childPath );
 		}

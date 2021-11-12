@@ -107,8 +107,8 @@ describe( "Plugin", () =>
 
 			plugin.addStylesheetsDirectory( "./test/fixtures/" );
 
-			assert.equal( plugin.stylesheets.async.blocks.length, 1, "Number of items in stylesheets.async.blocks" );
-			assert.equal( plugin.stylesheets.critical.blocks.length, 3, "Number of items in stylesheets.critical.blocks" );
+			assert.equal( plugin.stylesheets.async.blocks.length, 2, "Number of items in stylesheets.async.blocks" );
+			assert.equal( plugin.stylesheets.critical.blocks.length, 2, "Number of items in stylesheets.critical.blocks" );
 		});
 	});
 
@@ -186,7 +186,7 @@ describe( "Plugin", () =>
 
 				plugin.addStylesheet({
 					scope: scope,
-					stylesheet: "./test/fixtures/blocks/button.css",
+					stylesheet: "./test/fixtures/blocks/button-critical.css",
 					category: "blocks",
 				});
 
@@ -198,16 +198,16 @@ describe( "Plugin", () =>
 
 				plugin.addStylesheet({
 					scope: scope,
-					stylesheet: "./test/fixtures/global/index.css",
+					stylesheet: "./test/fixtures/global/index-critical.css",
 					category: "global",
 				});
 
 				assert.equal(
 					plugin[method](),
 					[
-						`:root {\n\t--color-black: #333;\n}\n`, // global/index.css
+						`:root {\n\t--color-black: #333;\n}\n`, // global/index-critical.css
 						`.stack > * + * {\n\tmargin-top: var( --stack-size );\n}\n`, // composition.css
-						`.button {\n\tborder-radius: 0.5em;\n}\n`, // blocks/button.css
+						`.button {\n\tborder-radius: 0.5em;\n}\n`, // blocks/button-critical.css
 					].join( "\n" )
 				);
 			});
@@ -225,7 +225,7 @@ describe( "Plugin", () =>
 
 				plugin.addStylesheet({
 					scope: scope,
-					stylesheet: "./test/fixtures/blocks/card.css",
+					stylesheet: "./test/fixtures/blocks/card-critical.css",
 					category: "blocks",
 				});
 
@@ -261,7 +261,7 @@ describe( "Plugin", () =>
 
 				plugin.addStylesheet({
 					scope: scope,
-					stylesheet: "./test/fixtures/blocks/card.css",
+					stylesheet: "./test/fixtures/blocks/card-critical.css",
 					category: "blocks",
 				});
 
@@ -427,10 +427,6 @@ describe( "Plugin", () =>
 					script: script
 				});
 			});
-
-			console.log( plugin.criticalScripts({
-				identifier: identifier
-			}) );
 
 			assert.equal(
 				plugin.criticalScripts({
